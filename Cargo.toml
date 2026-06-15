@@ -1,0 +1,27 @@
+[package]
+name = "pw-merger"
+version = "0.1.0"
+edition = "2024"
+description = "Merge two PipeWire audio sinks into a single persistent virtual output"
+license = "MIT"
+
+[[bin]]
+name = "pw-merger"
+path = "src/main.rs"
+
+[dependencies]
+pipewire = "0.10"
+clap = { version = "4", features = ["derive"] }
+anyhow = "1"
+log = "0.4"
+env_logger = "0.11"
+
+# for clean Ctrl-C handling from a non-PW thread
+ctrlc = { version = "3", features = ["termination"] }
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+strip = "symbols"
+panic = "abort"
