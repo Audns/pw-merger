@@ -145,6 +145,7 @@ pub fn print_sink_list(sinks: &[SinkDevice]) {
     }
     println!();
     println!("Usage:");
-    println!("  pw-merger <ID_A> <ID_B>                 # easiest — use IDs above");
-    println!("  pw-merger -o \"My Speakers\" 55 61       # with custom name");
+    println!("  pw-merger <ID_A> <ID_B>                  # merge two sinks");
+    println!("  pw-merger <ID_A> <ID_B> <ID_C>           # merge three sinks");
+    println!("  pw-merger -o \"My Speakers\" 55 61        # with custom name");
 }

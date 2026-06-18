@@ -14,8 +14,9 @@ use log::info;
 /// Examples
 /// --------
 ///   pw-merger --list                                         # show available sinks
-///   pw-merger 55 61                                          # merge by ID
+///   pw-merger 55 61                                          # merge two by ID
 ///   pw-merger -o "Speakers" 55 61                            # custom name
+///   pw-merger 55 61 73                                       # merge three sinks
 ///   pw-merger alsa_output.pci-0000_08_00.1.hdmi-stereo \
 ///             alsa_output.pci-0000_0a_00.4.iec958-stereo    # merge by name
 #[derive(Parser, Debug)]
@@ -29,9 +30,9 @@ pub struct Args {
     #[arg(short = 'o', long = "output", default_value = "Merged Output")]
     pub sink_name: String,
 
-    /// Sink IDs or node names to merge (2 required).
+    /// Sink IDs or node names to merge (2 or more required).
     /// Run `pw-merger --list` to see available IDs.
-    #[arg(required_unless_present = "list")]
+    #[arg(required_unless_present = "list", num_args = 2..)]
     pub devices: Vec<String>,
 
     /// Media role applied to the virtual sink (Music, Movie, Game …).
@@ -64,21 +65,25 @@ fn main() -> Result<()> {
     // ── Resolve device names ───────────────────────────────────────────────
     if args.devices.len() < 2 {
         bail!(
-            "need 2 sink IDs, got {}.\n\
+            "need at least 2 sink IDs, got {}.\n\
              Run `pw-merger --list` to see available sinks.",
             args.devices.len()
         );
     }
     let sinks = detector::discover_sinks()?;
-    let device_a = resolve_device(&args.devices[0], &sinks)?;
-    let device_b = resolve_device(&args.devices[1], &sinks)?;
+    let devices: Vec<String> = args
+        .devices
+        .iter()
+        .map(|d| resolve_device(d, &sinks))
+        .collect::<Result<_>>()?;
 
     info!("pw-merger starting");
     info!("  sink name : {}", args.sink_name);
-    info!("  device A  : {}", device_a);
-    info!("  device B  : {}", device_b);
+    for (i, name) in devices.iter().enumerate() {
+        info!("  device {}  : {}", (b'A' + i as u8) as char, name);
+    }
 
-    merger::run(args, device_a, device_b)
+    merger::run(args, devices)
 }
 
 /// Resolve a device identifier to a node.name.

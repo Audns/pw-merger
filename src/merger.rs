@@ -154,7 +154,7 @@ impl PortTracker {
 
 // ── public entry point ────────────────────────────────────────────────────────
 
-pub fn run(args: Args, device_a: String, device_b: String) -> Result<()> {
+pub fn run(args: Args, devices: Vec<String>) -> Result<()> {
     let main_loop = MainLoopRc::new(None).context("failed to create PipeWire main loop")?;
     let context =
         ContextBox::new(main_loop.loop_(), None).context("failed to create PipeWire context")?;
@@ -175,7 +175,7 @@ pub fn run(args: Args, device_a: String, device_b: String) -> Result<()> {
     .context("failed to install Ctrl-C handler")?;
 
     // ── trackers ───────────────────────────────────────────────────────────
-    let tracker = NodeTracker::new(vec![device_a.clone(), device_b.clone()]);
+    let tracker = NodeTracker::new(devices.clone());
     let ports = PortTracker::new();
 
     // We store created link proxies here so they stay alive.

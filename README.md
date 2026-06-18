@@ -1,6 +1,6 @@
 # pw-merger
 
-Merge two PipeWire audio sinks into one persistent virtual output — no
+Merge two or more PipeWire audio sinks into one persistent virtual output — no
 drag-and-drop, no re-wiring after pausing media.
 
 ## How it works
@@ -8,6 +8,16 @@ drag-and-drop, no re-wiring after pausing media.
 `pw-merger` creates a virtual null sink and directly links its monitor
 ports to each target device's playback ports.  The link proxies are held
 open so the connections survive media pauses and device reconnects.
+
+Supports merging any number of devices (2 or more):
+
+```text
+   [App audio] ──► [Virtual null sink "Merged Output"]
+                          │  monitor ports
+                  ┌───────┬───────┬──────┐
+                  ▼       ▼       ▼      ▼
+              [Speakers] [HDMI] [Headset] [USB DAC]
+```
 
 ## Dependencies
 
@@ -37,26 +47,26 @@ cargo build --release
 # 1. List available sinks
 pw-merger --list
 
-# 2. Merge two sinks by ID
-pw-merger 55 61
+# 2. Merge two or more sinks by ID
+pw-merger 55 61                # two sinks
+pw-merger 55 61 73             # three sinks
 
 # 3. (Optional) Give it a nice name
-pw-merger -o "Speakers + HDMI" 55 61
+pw-merger -o "Whole House" 55 61 73
 ```
 
-Then in pavucontrol (or your player), select **"Speakers + HDMI"** as the
-playback device.  Audio will play on both devices simultaneously.
+Then in pavucontrol (or your player), select **"Whole House"** as the
+playback device.  Audio will play on all target devices simultaneously.
 
 Press `Ctrl-C` to stop.
 
 ## Usage
 
 ```text
-pw-merger [OPTIONS] <DEVICE_A> <DEVICE_B>
+pw-merger [OPTIONS] <DEVICE>...
 
 Arguments:
-  <DEVICE_A>  Sink ID or node name (see --list)
-  <DEVICE_B>  Sink ID or node name (see --list)
+  <DEVICE>...  Two or more sink IDs or node names (see --list)
 
 Options:
   -l, --list              List available sinks and exit
@@ -70,14 +80,18 @@ Options:
 
 ```bash
 # Merge by numeric ID (easiest)
-pw-merger 55 61
+pw-merger 55 61                # two sinks
+pw-merger 55 61 73             # three sinks
 
 # Merge by full node name
 pw-merger alsa_output.pci-0000_08_00.1.hdmi-stereo \
           alsa_output.pci-0000_0a_00.4.iec958-stereo
 
+# Mix IDs and names
+pw-merger 55 alsa_output.hdmi-stereo
+
 # Custom sink name
-pw-merger -o "Whole House Audio" 55 61
+pw-merger -o "Whole House Audio" 55 61 73
 
 # Debug logging
 pw-merger -v 55 61
@@ -105,8 +119,9 @@ systemctl --user status pw-merger
 **"no audio sink with ID"** — Run `pw-merger --list` to see valid IDs.
 Device IDs can change across reboots.
 
-**Audio plays on only one device** — Check `pw-merger --list` to confirm
-both sinks are available.  Look for "links established" in the log output.
+**Audio plays on only some devices** — Check `pw-merger --list` to confirm
+all target sinks are available.  Look for "links established" in the log
+output for each device.
 
 **Latency / xruns** — Increase the PipeWire quantum:
 `pw-metadata -n settings 0 clock.force-quantum 2048`
