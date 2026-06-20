@@ -46,10 +46,7 @@ impl NodeTracker {
         if global.type_ != ObjectType::Node {
             return;
         }
-        let props = match global.props {
-            Some(p) => p,
-            None => return,
-        };
+        let Some(props) = global.props else { return };
         let name = match props.get("node.name") {
             Some(n) => n.to_owned(),
             None => return,

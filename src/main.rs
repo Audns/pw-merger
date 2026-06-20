@@ -71,19 +71,23 @@ fn main() -> Result<()> {
         );
     }
     let sinks = detector::discover_sinks()?;
-    let devices: Vec<String> = args
+    let devices: &[String] = &args
         .devices
         .iter()
-        .map(|d| resolve_device(d, &sinks))
-        .collect::<Result<_>>()?;
+        .map(|d| resolve_device(d, &sinks).unwrap_or_default())
+        .collect::<Vec<_>>();
 
     info!("pw-merger starting");
     info!("  sink name : {}", args.sink_name);
     for (i, name) in devices.iter().enumerate() {
-        info!("  device {}  : {}", (b'A' + i as u8) as char, name);
+        info!(
+            "  device {}  : {}",
+            (b'A' + u8::try_from(i).unwrap_or_default()) as char,
+            name
+        );
     }
 
-    merger::run(args, devices)
+    merger::run(&args, devices)
 }
 
 /// Resolve a device identifier to a node.name.

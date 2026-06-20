@@ -71,10 +71,7 @@ impl PortTracker {
     }
 
     fn on_global(&self, global: &GlobalObject<&DictRef>) {
-        let props = match global.props {
-            Some(p) => p,
-            None => return,
-        };
+        let Some(props) = global.props else { return };
 
         match global.type_ {
             ObjectType::Port => {
@@ -154,7 +151,7 @@ impl PortTracker {
 
 // ── public entry point ────────────────────────────────────────────────────────
 
-pub fn run(args: Args, devices: Vec<String>) -> Result<()> {
+pub fn run(args: &Args, devices: &[String]) -> Result<()> {
     let main_loop = MainLoopRc::new(None).context("failed to create PipeWire main loop")?;
     let context =
         ContextBox::new(main_loop.loop_(), None).context("failed to create PipeWire context")?;
@@ -175,7 +172,7 @@ pub fn run(args: Args, devices: Vec<String>) -> Result<()> {
     .context("failed to install Ctrl-C handler")?;
 
     // ── trackers ───────────────────────────────────────────────────────────
-    let tracker = NodeTracker::new(devices.clone());
+    let tracker = NodeTracker::new(devices.to_vec());
     let ports = PortTracker::new();
 
     // We store created link proxies here so they stay alive.
