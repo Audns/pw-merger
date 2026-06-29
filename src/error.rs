@@ -6,7 +6,7 @@ use std::fmt;
 pub enum MergerError {
     /// A device name was given but never appeared in the registry.
     DeviceNotFound(String),
-    /// PipeWire reported an error code while creating an object.
+    /// `PipeWire` reported an error code while creating an object.
     PipeWire(i32, &'static str),
 }
 

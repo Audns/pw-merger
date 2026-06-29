@@ -1,6 +1,6 @@
-/// detector.rs — Discover available PipeWire audio sinks.
+/// detector.rs — Discover available `PipeWire` audio sinks.
 ///
-/// Scans the PipeWire registry for nodes with `media.class = "Audio/Sink"`
+/// Scans the `PipeWire` registry for nodes with `media.class = "Audio/Sink"`
 /// and returns them sorted by name.  Used by the `--list` flag and `--auto`
 /// mode.
 use std::cell::RefCell;
@@ -21,13 +21,13 @@ use pipewire::types::ObjectType;
 /// A discovered audio sink device.
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct SinkDevice {
-    /// PipeWire global ID.
+    /// `PipeWire` global ID.
     pub id: u32,
     /// `node.name` — unique identifier used in `--device-a` / `--device-b`.
     pub name: String,
     /// Human-readable description from `node.description`.
     pub description: String,
-    /// The audio card / driver name if available (e.g. "alsa_card.pci-...").
+    /// The audio card / driver name if available (e.g. "`alsa_card.pci`-...").
     pub driver: String,
 }
 
@@ -43,9 +43,9 @@ impl SinkDevice {
     }
 }
 
-/// Scan PipeWire for all audio sink nodes.
+/// Scan `PipeWire` for all audio sink nodes.
 ///
-/// Connects to PipeWire, waits briefly for the registry to populate, then
+/// Connects to `PipeWire`, waits briefly for the registry to populate, then
 /// returns the discovered sinks sorted by name.
 pub fn discover_sinks() -> Result<Vec<SinkDevice>> {
     let main_loop = MainLoopRc::new(None).context("failed to create PipeWire main loop")?;
@@ -87,7 +87,7 @@ pub fn discover_sinks() -> Result<Vec<SinkDevice>> {
     Ok(result)
 }
 
-/// Try to extract a `SinkDevice` from a PipeWire global object.
+/// Try to extract a `SinkDevice` from a `PipeWire` global object.
 ///
 /// Returns `Some` only for audio sink nodes (excludes monitors/sources).
 fn parse_sink(global: &GlobalObject<&DictRef>) -> Option<SinkDevice> {

@@ -1,14 +1,14 @@
-/// merger.rs — Core PipeWire integration.
+/// merger.rs — Core `PipeWire` integration.
 ///
 /// Strategy
 /// --------
-/// 1. Connect to PipeWire and subscribe to the global registry.
+/// 1. Connect to `PipeWire` and subscribe to the global registry.
 /// 2. Create a virtual null-audio-sink ("Merged Output").
 /// 3. For every target device, link its playback ports to the null sink's
 ///    monitor ports via direct port links (no loopback module needed).
 /// 4. Keep the main loop running.  Holding the link proxy objects keeps
 ///    the links alive through media pauses and device reconnects.
-/// 5. On SIGINT/SIGTERM the main loop is quit; PipeWire cleans up our objects
+/// 5. On SIGINT/SIGTERM the main loop is quit; `PipeWire` cleans up our objects
 ///    when the connection is dropped.
 use std::cell::RefCell;
 use std::collections::HashMap;
@@ -34,7 +34,7 @@ use pipewire::types::ObjectType;
 use crate::Args;
 use crate::registry::NodeTracker;
 
-/// A discovered port on a PipeWire node.
+/// A discovered port on a `PipeWire` node.
 #[derive(Debug, Clone)]
 struct PortInfo {
     id: u32,

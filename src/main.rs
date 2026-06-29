@@ -7,7 +7,7 @@ use anyhow::{Result, bail};
 use clap::Parser;
 use log::info;
 
-/// Merge two PipeWire audio sinks into one persistent virtual output.
+/// Merge two `PipeWire` audio sinks into one persistent virtual output.
 ///
 /// Creates a virtual sink that plays to both target devices simultaneously.
 ///
@@ -39,7 +39,7 @@ pub struct Args {
     #[arg(long, default_value = "Music")]
     pub media_role: String,
 
-    /// Verbose logging (set RUST_LOG=debug for even more detail).
+    /// Verbose logging (set `RUST_LOG=debug` for even more detail).
     #[arg(short, long)]
     pub verbose: bool,
 }
@@ -92,7 +92,7 @@ fn main() -> Result<()> {
 
 /// Resolve a device identifier to a node.name.
 ///
-/// If `id_str` is purely numeric, treat it as a PipeWire global ID and
+/// If `id_str` is purely numeric, treat it as a `PipeWire` global ID and
 /// look up the corresponding sink.  Otherwise treat it as a node.name
 /// directly.
 fn resolve_device(id_str: &str, sinks: &[detector::SinkDevice]) -> Result<String> {

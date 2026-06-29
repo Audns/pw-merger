@@ -6,7 +6,7 @@ use pipewire::registry::GlobalObject;
 use pipewire::spa::utils::dict::DictRef;
 use pipewire::types::ObjectType;
 
-/// Everything we know about a single PipeWire node that we care about.
+/// Everything we know about a single `PipeWire` node that we care about.
 #[derive(Debug, Clone)]
 pub struct NodeInfo {
     pub id: u32,
@@ -23,7 +23,7 @@ pub struct NodeTracker {
 
 #[derive(Debug, Default)]
 struct Inner {
-    /// All known nodes keyed by PipeWire global ID.
+    /// All known nodes keyed by `PipeWire` global ID.
     nodes: HashMap<u32, NodeInfo>,
     /// node.name values we are interested in.
     targets: Vec<String>,
